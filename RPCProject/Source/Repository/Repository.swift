@@ -96,14 +96,14 @@ class NetworkRepository: NetworkRepositoryProtocol {
     
     func sendMessage(_ message: ChatMessage) {
         do {
-            let procedure = Procedure(procedure: .message, parameter: message.content)
+            let procedure = Procedure(procedure: .message, parameter: message)
             let data = try procedure.encodeToJson()
             client.callProcedure(data)
                 .sink { _ in
-                } receiveValue: { data in
+                } receiveValue: { [weak self] data in
                     do {
-                        let procedure = try Procedure<String>.decodeFromJson(data: data)
-                        print(procedure)
+                        let procedure = try Procedure<ChatMessage>.decodeFromJson(data: data)
+                        self?.chatMessagePublisher.send(procedure.parameters)
                     } catch {
                         print(error)
                     }

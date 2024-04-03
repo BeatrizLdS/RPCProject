@@ -57,7 +57,6 @@ class ViewModel: ObservableObject {
             sender: .localUser,
             content: inputUser)
         repository.sendMessage(newMessage)
-        self.messages.append(newMessage)
         inputUser = ""
     }
     

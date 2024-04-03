@@ -70,28 +70,29 @@ struct ChatView: View {
     var chat: some View {
         VStack(spacing: 5) {
             ForEach(messages, id: \.self) { message in
-                let sender = message.sender
-                switch sender {
-                case .localUser:
-                    HStack {
-                        Spacer(minLength: 50)
-                        Text(message.content)
-                            .foregroundColor(.black)
-                            .padding(10)
-                            .background(Color.green.opacity(0.5))
-                            .cornerRadius(15)
+                if let sender = ChatMessage.SenderType(rawValue: message.sender) {
+                    switch sender {
+                    case .localUser:
+                        HStack {
+                            Spacer(minLength: 50)
+                            Text(message.content)
+                                .foregroundColor(.black)
+                                .padding(10)
+                                .background(Color.green.opacity(0.5))
+                                .cornerRadius(15)
+                        }
+                        .padding(.horizontal, 0)
+                    case .remoteUser:
+                        HStack {
+                            Text(message.content)
+                                .foregroundColor(.black)
+                                .padding(10)
+                                .background(Color.gray.opacity(0.5))
+                                .cornerRadius(15)
+                            Spacer(minLength: 50)
+                        }
+                        .padding(.horizontal, 5)
                     }
-                    .padding(.horizontal, 0)
-                case .remoteUser:
-                    HStack {
-                        Text(message.content)
-                            .foregroundColor(.black)
-                            .padding(10)
-                            .background(Color.gray.opacity(0.5))
-                            .cornerRadius(15)
-                        Spacer(minLength: 50)
-                    }
-                    .padding(.horizontal, 5)
                 }
             }
         }
