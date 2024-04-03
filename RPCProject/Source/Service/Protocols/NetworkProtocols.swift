@@ -7,12 +7,7 @@
 
 import Foundation
 
-protocol Comunication {
-    func sendMessage(_ message: Data, completion: @escaping ((Bool) -> Void))
-//    func receiveMessage()
-}
-
-protocol ClientProtocol: Comunication {
+protocol ClientProtocol {
     associatedtype Connection
     var connection: Connection? { get set }
 }

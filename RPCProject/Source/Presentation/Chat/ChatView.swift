@@ -24,6 +24,9 @@ struct ChatView: View {
                 .onAppear{
                     proxy.scrollTo(bottomID)
                 }
+                .onChange(of: messages) { _ in
+                    proxy.scrollTo(bottomID)
+                }
             }
             .padding(8)
             .onTapGesture {
@@ -100,7 +103,14 @@ struct ChatView: View {
         text: .constant(""),
         messages: .constant([
             .init(sender: .localUser, content: "Mensagem muitissimo longaaaaa longa longa longa longa longa longa longa longa longa"),
-            .init(sender: .remoteUser, content: "Mensagem 2")
+            .init(sender: .remoteUser, content: "Mensagem 2"),
+            .init(sender: .localUser, content: "Mensagem muitissimo longaaaaa longa longa longa longa longa longa longa longa longa"),
+            .init(sender: .localUser, content: "Mensagem muitissimo longaaaaa longa longa longa longa longa longa longa longa longa"),
+            .init(sender: .localUser, content: "Mensagem muitissimo longaaaaa longa longa longa longa longa longa longa longa longa"),
+            .init(sender: .localUser, content: "Mensagem muitissimo longaaaaa longa longa longa longa longa longa longa longa longa"),
+            .init(sender: .localUser, content: "Mensagem muitissimo longaaaaa longa longa longa longa longa longa longa longa longa"),
+            .init(sender: .localUser, content: "Mensagem muitissimo longaaaaa longa longa longa longa longa longa longa longa longa"),
+            .init(sender: .localUser, content: "Mensagem muitissimo longaaaaa longa longa longa longa longa longa longa longa longa")
         ])) {
             print("Ação")
         }

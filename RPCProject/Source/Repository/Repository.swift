@@ -13,7 +13,7 @@ import Combine
 protocol NetworkRepositoryProtocol {
     init(
         clientUDP: any ClientUDPProtocol,
-        client: any ClientTCPProtocol,
+        client: any ClientRPCProtocol,
         clientMappeer: any ClientStateMapperProtocol
     )
     
@@ -22,12 +22,12 @@ protocol NetworkRepositoryProtocol {
     var movePublisher: PassthroughSubject<Move, Never> { get set }
     
     func connect()
-    func clientSendMessage(_ message: ChatMessage)
+    func sendMessage(_ message: ChatMessage)
     func sendMove(_ move: Move)
 }
 
 class NetworkRepository: NetworkRepositoryProtocol {
-    private var client: any ClientTCPProtocol
+    private var client: any ClientRPCProtocol
     private var clientUPD: any ClientUDPProtocol
     
     private var serverIP: String? {
@@ -47,7 +47,7 @@ class NetworkRepository: NetworkRepositoryProtocol {
         
     required init(
         clientUDP: any ClientUDPProtocol,
-        client: any ClientTCPProtocol,
+        client: any ClientRPCProtocol,
         clientMappeer: any ClientStateMapperProtocol)
     {
         self.clientUPD = clientUDP
@@ -59,14 +59,19 @@ class NetworkRepository: NetworkRepositoryProtocol {
     
     func sendMove(_ move: Move) {
         do {
-            let data = try move.encodeToJson()
-            client.sendMessage(data) { hasSent in
-                if hasSent {
-                    print("Envio feito com Sucesso!")
-                } else {
-                    print("Deu Ruim Enviar!")
+            let procedure = Procedure(procedure: .move, parameter: move)
+            let data = try procedure.encodeToJson()
+            client.callProcedure(data)
+                .sink { _ in
+                } receiveValue: { data in
+                    do {
+                        let procedure = try Procedure<Move>.decodeFromJson(data: data)
+                        print(procedure)
+                    } catch {
+                        print(error)
+                    }
                 }
-            }
+                .store(in: &cancellables)
         } catch {
             print(error)
         }
@@ -86,18 +91,31 @@ class NetworkRepository: NetworkRepositoryProtocol {
     }
     
     private func connectTCP(_ host: String) {
-        client.connect(to: host, port: CommunicationPorts.tcpServer.rawValue)
+        client.connection!.connect(to: host, port: CommunicationPorts.tcpServer.rawValue)
     }
     
-    
-    func clientSendMessage(_ message: ChatMessage) {
-        if let messageData = message.content.data(using: .utf8) {
-            client.sendMessage(messageData) { _ in }
+    func sendMessage(_ message: ChatMessage) {
+        do {
+            let procedure = Procedure(procedure: .message, parameter: message.content)
+            let data = try procedure.encodeToJson()
+            client.callProcedure(data)
+                .sink { _ in
+                } receiveValue: { data in
+                    do {
+                        let procedure = try Procedure<String>.decodeFromJson(data: data)
+                        print(procedure)
+                    } catch {
+                        print(error)
+                    }
+                }
+                .store(in: &cancellables)
+        } catch {
+            print(error)
         }
     }
     
     private func setSubscriptions() {
-        self.client.statePublisher
+        self.client.connection!.statePublisher
             .sink { [weak self] state in
                 if let newState = self?.clientMapper.mapToDomain(state) {
                     self?.statePublisher.send(newState)
@@ -105,9 +123,8 @@ class NetworkRepository: NetworkRepositoryProtocol {
             }
             .store(in: &cancellables)
         
-        self.client.messagePublisher
+        self.client.connection!.messagePublisher
             .sink { [weak self] data in
-                
                 do {
                     let move = try Move.decodeFromJson(data: data)
                     self?.movePublisher.send(move)
@@ -146,5 +163,31 @@ extension NetworkRepository {
     enum CommunicationPorts: String {
         case broker = "1050"
         case tcpServer = "1100"
+    }
+    
+    struct Procedure<Parameters: Codable>: Codable {
+        let procedure: String
+        let parameters: Parameters
+        
+        init(procedure: ProcedureTypes, parameter: Parameters) {
+            self.procedure = procedure.rawValue
+            self.parameters = parameter
+        }
+        
+        enum ProcedureTypes: String {
+            case move
+            case message
+        }
+        
+        func encodeToJson() throws -> Data {
+            let encoder = JSONEncoder()
+            encoder.outputFormatting = .prettyPrinted
+            return try encoder.encode(self)
+        }
+        
+        static func decodeFromJson(data: Data) throws -> Procedure {
+            let decoder = JSONDecoder()
+            return try decoder.decode(Procedure.self, from: data)
+        }
     }
 }

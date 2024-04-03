@@ -56,7 +56,7 @@ class ViewModel: ObservableObject {
         let newMessage = ChatMessage(
             sender: .localUser,
             content: inputUser)
-        repository.clientSendMessage(newMessage)
+        repository.sendMessage(newMessage)
         self.messages.append(newMessage)
         inputUser = ""
     }

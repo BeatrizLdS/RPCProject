@@ -82,7 +82,7 @@ struct BoardView: View {
     BoardView(
         viewModel: ViewModel(repository: NetworkRepository(
             clientUDP: ClientUDP(),
-            client: ClientTCP(),
+            client: ClientRPC(connection: ClientTCP()),
             clientMappeer: ClientStateMapper()))
     )
 }
