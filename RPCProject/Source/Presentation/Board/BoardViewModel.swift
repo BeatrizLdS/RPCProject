@@ -89,9 +89,6 @@ extension ViewModel: BoardViewModelProtocol {
         let set2: Set<Int?> = Set(self.neighBorOfSelected ?? [])
 
         let deadPiece = Array(set1.intersection(set2))[0]!
-        boardSpaces[deadPiece] = 0
-        boardSpaces[selectedPiace!] = 0
-        boardSpaces[space] = 1
         
         let hasWin = hasWin()
         isWinner = hasWin

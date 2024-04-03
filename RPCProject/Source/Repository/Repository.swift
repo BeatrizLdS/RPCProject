@@ -63,10 +63,10 @@ class NetworkRepository: NetworkRepositoryProtocol {
             let data = try procedure.encodeToJson()
             client.callProcedure(data)
                 .sink { _ in
-                } receiveValue: { data in
+                } receiveValue: { [weak self] data in
                     do {
                         let procedure = try Procedure<Move>.decodeFromJson(data: data)
-                        print(procedure)
+                        self?.movePublisher.send(procedure.parameters)
                     } catch {
                         print(error)
                     }
