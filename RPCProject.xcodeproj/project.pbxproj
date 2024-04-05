@@ -26,6 +26,8 @@
 		FFE4BB0F2BBC669C00771CC5 /* NetworkProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFE4BB0E2BBC669C00771CC5 /* NetworkProtocols.swift */; };
 		FFE4BB122BBC66F000771CC5 /* ClientUDP.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFE4BB112BBC66F000771CC5 /* ClientUDP.swift */; };
 		FFE4BB142BBC67D900771CC5 /* ClientTCP.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFE4BB132BBC67D900771CC5 /* ClientTCP.swift */; };
+		FFE4BB162BBCE56D00771CC5 /* ClientRPC.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFE4BB152BBCE56D00771CC5 /* ClientRPC.swift */; };
+		FFE4BB182BBD031700771CC5 /* MoveMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFE4BB172BBD031700771CC5 /* MoveMapper.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -50,6 +52,8 @@
 		FFE4BB0E2BBC669C00771CC5 /* NetworkProtocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkProtocols.swift; sourceTree = "<group>"; };
 		FFE4BB112BBC66F000771CC5 /* ClientUDP.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientUDP.swift; sourceTree = "<group>"; };
 		FFE4BB132BBC67D900771CC5 /* ClientTCP.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientTCP.swift; sourceTree = "<group>"; };
+		FFE4BB152BBCE56D00771CC5 /* ClientRPC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientRPC.swift; sourceTree = "<group>"; };
+		FFE4BB172BBD031700771CC5 /* MoveMapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoveMapper.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -214,6 +218,7 @@
 			children = (
 				FFE4BB072BBC641B00771CC5 /* DomainEntityMapperProtocol.swift */,
 				FFE4BB092BBC643700771CC5 /* ConnectionStateMapper.swift */,
+				FFE4BB172BBD031700771CC5 /* MoveMapper.swift */,
 			);
 			path = Mapper;
 			sourceTree = "<group>";
@@ -231,6 +236,7 @@
 			children = (
 				FFE4BB112BBC66F000771CC5 /* ClientUDP.swift */,
 				FFE4BB132BBC67D900771CC5 /* ClientTCP.swift */,
+				FFE4BB152BBCE56D00771CC5 /* ClientRPC.swift */,
 			);
 			path = Network;
 			sourceTree = "<group>";
@@ -308,9 +314,11 @@
 				FFE4BB142BBC67D900771CC5 /* ClientTCP.swift in Sources */,
 				FFE4BB0F2BBC669C00771CC5 /* NetworkProtocols.swift in Sources */,
 				FFE4BB0A2BBC643700771CC5 /* ConnectionStateMapper.swift in Sources */,
+				FFE4BB162BBCE56D00771CC5 /* ClientRPC.swift in Sources */,
 				FFE4BAF92BBC60A400771CC5 /* ChatView.swift in Sources */,
 				FFE4BB082BBC641B00771CC5 /* DomainEntityMapperProtocol.swift in Sources */,
 				FFE4BB0C2BBC64A600771CC5 /* Repository.swift in Sources */,
+				FFE4BB182BBD031700771CC5 /* MoveMapper.swift in Sources */,
 				FFE4BAF72BBC609900771CC5 /* BoardView.swift in Sources */,
 				FFE4BAFF2BBC611900771CC5 /* ConnectionState.swift in Sources */,
 				FFE4BAFB2BBC60D300771CC5 /* UIApplicationExtension.swift in Sources */,

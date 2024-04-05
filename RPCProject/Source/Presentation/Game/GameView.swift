@@ -11,7 +11,7 @@ struct GameView: View {
     @ObservedObject private var viewModel: ViewModel = ViewModel(
         repository: NetworkRepository(
             clientUDP: ClientUDP(),
-            client: ClientTCP(),
+            client: ClientRPC(connection: ClientTCP()),
             clientMappeer: ClientStateMapper()
         ))
     
