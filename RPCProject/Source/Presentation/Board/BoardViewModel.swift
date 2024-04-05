@@ -120,13 +120,14 @@ extension ViewModel: BoardViewModelProtocol {
     }
     
     func receiveMove(_ move: Move) {
+        isTurn.toggle()
+        
         if let deadPiece = move.removed,
             let toSpace = move.moveTo,
            let fromSpace = move.moveFrom {
             boardSpaces[deadPiece] = 0
             boardSpaces[fromSpace] = 0
             boardSpaces[toSpace] = 1
-            isTurn = true
         }
         
         if let hasLose = move.endGame {

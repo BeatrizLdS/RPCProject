@@ -65,8 +65,8 @@ class NetworkRepository: NetworkRepositoryProtocol {
                 .sink { _ in
                 } receiveValue: { [weak self] data in
                     do {
-                        let procedure = try Procedure<Move>.decodeFromJson(data: data)
-                        self?.movePublisher.send(procedure.parameters)
+                        let receivedMove = try Move.decodeFromJson(data: data)
+                        self?.movePublisher.send(receivedMove)
                     } catch {
                         print(error)
                     }
@@ -102,8 +102,8 @@ class NetworkRepository: NetworkRepositoryProtocol {
                 .sink { _ in
                 } receiveValue: { [weak self] data in
                     do {
-                        let procedure = try Procedure<ChatMessage>.decodeFromJson(data: data)
-                        self?.chatMessagePublisher.send(procedure.parameters)
+                        let receivedMessage = try ChatMessage.decodeFromJson(data: data)
+                        self?.chatMessagePublisher.send(receivedMessage)
                     } catch {
                         print(error)
                     }
@@ -128,8 +128,9 @@ class NetworkRepository: NetworkRepositoryProtocol {
                 do {
                     let move = try Move.decodeFromJson(data: data)
                     self?.movePublisher.send(move)
+                    let chatMessage = try ChatMessage.decodeFromJson(data: data)
+                    self?.chatMessagePublisher.send(chatMessage)
                 } catch {
-                    print(error)
                     if let content = String(data: data, encoding: .utf8) {
                         if let status = MessagesType(rawValue: content) {
                             switch status {
@@ -138,12 +139,6 @@ class NetworkRepository: NetworkRepositoryProtocol {
                             case .FIRST_TO_CONNECT:
                                 self?.statePublisher.send(.waitingConnection)
                             }
-                        } else {
-                            let newMessage = ChatMessage(
-                                sender: .remoteUser,
-                                content: content
-                            )
-                            self?.chatMessagePublisher.send(newMessage)
                         }
                     }
                 }

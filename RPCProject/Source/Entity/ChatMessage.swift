@@ -20,4 +20,9 @@ struct ChatMessage: Hashable, Codable {
         case localUser
         case remoteUser
     }
+    
+    static func decodeFromJson(data: Data) throws -> ChatMessage {
+        let decoder = JSONDecoder()
+        return try decoder.decode(ChatMessage.self, from: data)
+    }
 }
