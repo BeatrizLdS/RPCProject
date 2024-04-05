@@ -13,6 +13,7 @@ protocol ClientTCPProtocol: ClientProtocol where Connection == NWConnection {
     var statePublisher: PassthroughSubject<NWConnection.State, Never> { get set }
     var messagePublisher: PassthroughSubject<Data, Never> { get set }
     func connect(to host: String, port: String)
+    func sendMessage(_ message: Data, completion: @escaping ((Bool) -> Void))
 }
 
 class ClientTCP: ClientTCPProtocol {
@@ -48,8 +49,10 @@ class ClientTCP: ClientTCPProtocol {
         connection?.send(content: message, completion: .contentProcessed({ error in
             if let error = error {
                 print("Error sending message: \(error)")
+                completion(false)
             } else {
                 print("Message sent sucessfully!")
+                completion(true)
             }
         }))
     }

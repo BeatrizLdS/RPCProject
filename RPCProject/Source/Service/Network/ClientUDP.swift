@@ -10,6 +10,7 @@ import Network
 
 protocol ClientUDPProtocol: ClientProtocol where Connection == NWConnection {
     func discoverServer(port: String, completion: @escaping (Result<Data ,Error>) -> Void)
+    func sendMessage(_ message: Data, completion: @escaping ((Bool) -> Void))
 }
 
 class ClientUDP: ClientUDPProtocol {

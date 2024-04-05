@@ -89,9 +89,6 @@ extension ViewModel: BoardViewModelProtocol {
         let set2: Set<Int?> = Set(self.neighBorOfSelected ?? [])
 
         let deadPiece = Array(set1.intersection(set2))[0]!
-        boardSpaces[deadPiece] = 0
-        boardSpaces[selectedPiace!] = 0
-        boardSpaces[space] = 1
         
         let hasWin = hasWin()
         isWinner = hasWin
@@ -123,13 +120,14 @@ extension ViewModel: BoardViewModelProtocol {
     }
     
     func receiveMove(_ move: Move) {
+        isTurn.toggle()
+        
         if let deadPiece = move.removed,
             let toSpace = move.moveTo,
            let fromSpace = move.moveFrom {
             boardSpaces[deadPiece] = 0
             boardSpaces[fromSpace] = 0
             boardSpaces[toSpace] = 1
-            isTurn = true
         }
         
         if let hasLose = move.endGame {
