@@ -13,42 +13,68 @@ import GRPC
 import NIOCore
 import NIOPosix
 
-protocol NetworkRepositoryProtocol {
-    init(chatClient: any ChatgRPCClienteProtocol)
-    
+protocol NetworkRepositoryProtocol {    
     var currentUser: String { get set }
     var chatMessagePublisher: PassthroughSubject<ChatMessage, Never> { get set }
     var movePublisher: PassthroughSubject<Move, Never> { get set }
     
-    func connect()
+    func connect() async -> ConnectionState?
     func sendMessage(_ message: ChatMessage, userSender: String) async
-    func sendMove(_ move: Move)
     func receiveMessages() async
+    func sendMove(_ move: Move) async
+    func receiveMoves() async
 }
 
 class NetworkRepository: NetworkRepositoryProtocol {
     var currentUser: String = ""
+
     private var chatClient: any ChatgRPCClienteProtocol
+    private var gameClient: any GamegRPCClienteProtocol
     
     private var chatLocalMapper: any ChatMessageLocalMapperProtocol = ChatMessageLocalMapper()
     private var chatRemoteMapper: any ChatMessageRemoteMapperProtocol = ChatMessageRemoteMapper()
+    private var gameConnectionMapper: any ClientStateMapperProtocol = ClientStateMapper()
+    private var moveMapper: any MoveMapperProtocol = MoveMapper()
     
-    var statePublisher = PassthroughSubject<ConnectionState, Never>()
     var chatMessagePublisher = PassthroughSubject<ChatMessage, Never>()
     var movePublisher = PassthroughSubject<Move, Never>()
+    
     private var cancellables = Set<AnyCancellable>()
         
-    required init(chatClient: any ChatgRPCClienteProtocol) {
+    required init(
+        chatClient: any ChatgRPCClienteProtocol,
+        gameClient: any GamegRPCClienteProtocol
+    ) {
         self.chatClient = chatClient
+        self.gameClient = gameClient
         setSubscriptions()
     }
     
-    func sendMove(_ move: Move) {
-
+    func connect() async -> ConnectionState? {
+        do {
+            let request = Game_User.with { request in
+                request.name = currentUser
+            }
+            let result = try await gameClient.connect(user: request)
+            let state = gameConnectionMapper.mapToDomain(StateConnectType(rawValue: result.state)!)
+            return state
+        } catch {
+            print(error)
+        }
+        return nil
     }
     
-    func connect() {
-
+    func sendMove(_ move: Move) async {
+        do {
+            let moveRequest = Game_Move.with { request in
+                request.endGame = move.endGame ?? false
+                request.restartGame = move.retartGame ?? false
+                request.moveFrom = Int32(move.moveFrom!)
+                request.moveTo = Int32(move.moveTo!)
+                request.removed = Int32(move.removed!)
+            }
+            await gameClient.sendMove(move: moveRequest)
+        }
     }
     
     func sendMessage(_ message: ChatMessage, userSender: String) async {
@@ -65,6 +91,10 @@ class NetworkRepository: NetworkRepositoryProtocol {
         await chatClient.listenForMessages()
     }
     
+    func receiveMoves() async {
+        await gameClient.listenForMoves()
+    }
+    
     func setSubscriptions() {
         chatClient.chatMessagePublisher
             .sink { [weak self] chat_message in
@@ -79,17 +109,25 @@ class NetworkRepository: NetworkRepositoryProtocol {
                 }
             }
             .store(in: &cancellables)
+        
+        gameClient.movePublisher
+            .sink { [weak self] move in
+                if let currentMove = self?.moveMapper.mapToDomain(move) {
+                    self?.movePublisher.send(currentMove)
+                }
+            }
+            .store(in: &cancellables)
     }
 }
 
 extension NetworkRepository {
-    enum MessagesType: String {
+    enum StateConnectType: String {
         case START_GAME
         case FIRST_TO_CONNECT
     }
     
-    enum CommunicationPorts: String {
-        case broker = "1050"
-        case gRPCserver = "1100"
+    enum CommunicationPorts: Int {
+        case gamegRPC = 1200
+        case chatgRPC = 1100
     }
 }

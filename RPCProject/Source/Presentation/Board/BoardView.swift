@@ -64,8 +64,8 @@ struct BoardView: View {
                         .stroke(Color.gray, lineWidth: 5)
                 }
                 .onTapGesture {
-                    withAnimation {
-                        viewModel.moveTo(currentSpace)
+                    Task {
+                        await viewModel.moveTo(currentSpace)
                     }
                 }
         )
@@ -80,10 +80,6 @@ struct BoardView: View {
 
 #Preview {
     BoardView(
-        viewModel: ViewModel(
-            repository: NetworkRepository(
-                chatClient: ChatgRPCCliente(host: "127.0.0.1", port: 1100)
-            )
-        )
+        viewModel: ViewModel()
     )
 }
