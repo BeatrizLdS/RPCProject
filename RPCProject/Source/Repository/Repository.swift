@@ -9,141 +9,74 @@ import Foundation
 
 import Network
 import Combine
+import GRPC
+import NIOCore
+import NIOPosix
 
 protocol NetworkRepositoryProtocol {
-    init(
-        clientUDP: any ClientUDPProtocol,
-        client: any ClientRPCProtocol,
-        clientMappeer: any ClientStateMapperProtocol
-    )
+    init(chatClient: any ChatgRPCClienteProtocol)
     
-    var statePublisher: PassthroughSubject<ConnectionState, Never> { get set }
+    var currentUser: String { get set }
     var chatMessagePublisher: PassthroughSubject<ChatMessage, Never> { get set }
     var movePublisher: PassthroughSubject<Move, Never> { get set }
     
     func connect()
-    func sendMessage(_ message: ChatMessage)
+    func sendMessage(_ message: ChatMessage, userSender: String) async
     func sendMove(_ move: Move)
+    func receiveMessages() async
 }
 
 class NetworkRepository: NetworkRepositoryProtocol {
-    private var client: any ClientRPCProtocol
-    private var clientUPD: any ClientUDPProtocol
+    var currentUser: String = ""
+    private var chatClient: any ChatgRPCClienteProtocol
     
-    private var serverIP: String? {
-        didSet {
-            if let address = serverIP {
-                self.connectTCP(address)
-            }
-        }
-    }
-    
-    private var clientMapper: any ClientStateMapperProtocol
+    private var chatLocalMapper: any ChatMessageLocalMapperProtocol = ChatMessageLocalMapper()
+    private var chatRemoteMapper: any ChatMessageRemoteMapperProtocol = ChatMessageRemoteMapper()
     
     var statePublisher = PassthroughSubject<ConnectionState, Never>()
     var chatMessagePublisher = PassthroughSubject<ChatMessage, Never>()
     var movePublisher = PassthroughSubject<Move, Never>()
     private var cancellables = Set<AnyCancellable>()
         
-    required init(
-        clientUDP: any ClientUDPProtocol,
-        client: any ClientRPCProtocol,
-        clientMappeer: any ClientStateMapperProtocol)
-    {
-        self.clientUPD = clientUDP
-        self.client = client
-        self.clientMapper = clientMappeer
-        
+    required init(chatClient: any ChatgRPCClienteProtocol) {
+        self.chatClient = chatClient
         setSubscriptions()
     }
     
     func sendMove(_ move: Move) {
-        do {
-            let procedure = Procedure(procedure: .move, parameter: move)
-            let data = try procedure.encodeToJson()
-            client.callProcedure(data)
-                .sink { _ in
-                } receiveValue: { [weak self] data in
-                    do {
-                        let receivedMove = try Move.decodeFromJson(data: data)
-                        self?.movePublisher.send(receivedMove)
-                    } catch {
-                        print(error)
-                    }
-                }
-                .store(in: &cancellables)
-        } catch {
-            print(error)
-        }
+
     }
     
     func connect() {
-        clientUPD.discoverServer(port: CommunicationPorts.broker.rawValue) { [ weak self ] result in
-            switch result {
-            case .success(let data):
-                if let resultString = String(data: data, encoding: .utf8) {
-                    self?.serverIP = resultString
-                }
-            case .failure(let error):
-                print(error)
-            }
-        }
+
     }
     
-    private func connectTCP(_ host: String) {
-        client.connection!.connect(to: host, port: CommunicationPorts.tcpServer.rawValue)
-    }
-    
-    func sendMessage(_ message: ChatMessage) {
+    func sendMessage(_ message: ChatMessage, userSender: String) async {
         do {
-            let procedure = Procedure(procedure: .message, parameter: message)
-            let data = try procedure.encodeToJson()
-            client.callProcedure(data)
-                .sink { _ in
-                } receiveValue: { [weak self] data in
-                    do {
-                        let receivedMessage = try ChatMessage.decodeFromJson(data: data)
-                        self?.chatMessagePublisher.send(receivedMessage)
-                    } catch {
-                        print(error)
-                    }
-                }
-                .store(in: &cancellables)
-        } catch {
-            print(error)
-        }
+            let chatRequest = Chat_ChatMessage.with { request in
+                request.text = message.content
+                request.sender = userSender
+            }
+            let _ = try await chatClient.sendMessage(message: chatRequest)
+        } catch {}
     }
     
-    private func setSubscriptions() {
-        self.client.connection!.statePublisher
-            .sink { [weak self] state in
-                if let newState = self?.clientMapper.mapToDomain(state) {
-                    self?.statePublisher.send(newState)
-                }
-            }
-            .store(in: &cancellables)
-        
-        self.client.connection!.messagePublisher
-            .sink { [weak self] data in
-                do {
-                    let move = try Move.decodeFromJson(data: data)
-                    self?.movePublisher.send(move)
-                    let chatMessage = try ChatMessage.decodeFromJson(data: data)
-                    self?.chatMessagePublisher.send(chatMessage)
-                } catch {
-                    if let content = String(data: data, encoding: .utf8) {
-                        if let status = MessagesType(rawValue: content) {
-                            switch status {
-                            case .START_GAME:
-                                self?.statePublisher.send(.connectionReady)
-                            case .FIRST_TO_CONNECT:
-                                self?.statePublisher.send(.waitingConnection)
-                            }
-                        }
+    func receiveMessages() async {
+        await chatClient.listenForMessages()
+    }
+    
+    func setSubscriptions() {
+        chatClient.chatMessagePublisher
+            .sink { [weak self] chat_message in
+                if chat_message.sender == self?.currentUser {
+                    if let chatMessage = self?.chatLocalMapper.mapToDomain(chat_message) {
+                        self?.chatMessagePublisher.send(chatMessage)
+                    }
+                } else {
+                    if let chatMessage = self?.chatRemoteMapper.mapToDomain(chat_message) {
+                        self?.chatMessagePublisher.send(chatMessage)
                     }
                 }
-                
-                
             }
             .store(in: &cancellables)
     }
@@ -157,32 +90,6 @@ extension NetworkRepository {
     
     enum CommunicationPorts: String {
         case broker = "1050"
-        case tcpServer = "1100"
-    }
-    
-    struct Procedure<Parameters: Codable>: Codable {
-        let procedure: String
-        let parameters: Parameters
-        
-        init(procedure: ProcedureTypes, parameter: Parameters) {
-            self.procedure = procedure.rawValue
-            self.parameters = parameter
-        }
-        
-        enum ProcedureTypes: String {
-            case move
-            case message
-        }
-        
-        func encodeToJson() throws -> Data {
-            let encoder = JSONEncoder()
-            encoder.outputFormatting = .prettyPrinted
-            return try encoder.encode(self)
-        }
-        
-        static func decodeFromJson(data: Data) throws -> Procedure {
-            let decoder = JSONDecoder()
-            return try decoder.decode(Procedure.self, from: data)
-        }
+        case gRPCserver = "1100"
     }
 }
