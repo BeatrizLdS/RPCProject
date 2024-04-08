@@ -27,32 +27,32 @@ class ViewModel: ObservableObject {
     private var connectionState: ConnectionState? {
         didSet {
             switch connectionState {
-            case .waitingConnection:
-                viewState = .waitingPlayer
+            case .firstToConnect:
+                viewState = .inGame
                 isTurn = true
                 isFirst = true
-            case .serverReady:
-                viewState = .waitingPlayer
-            case .connectionReady:
+            case .startGame:
                 viewState = .inGame
-            case .loadingConnection:
-                viewState = .loading
-            default:
-                break
+            case .none:
+                viewState = .notStarted
             }
         }
     }
     var repository: (any NetworkRepositoryProtocol)?
     private var cancellables = Set<AnyCancellable>()
     
-    func start() {
+    func start() async {
         self.repository = NetworkRepository(
             chatClient: ChatgRPCCliente(host: ipAddress, port: NetworkRepository.CommunicationPorts.chatgRPC.rawValue),
             gameClient: GamegRPCClient(host: ipAddress, port: NetworkRepository.CommunicationPorts.gamegRPC.rawValue)
         )
         self.repository!.currentUser = currentUserName
+        if let newState = await self.repository!.connect() {
+            DispatchQueue.main.async {
+                self.connectionState = newState
+            }
+        }
         setSubscriptions()
-        viewState = .inGame
     }
     
     func sendMessage() async {

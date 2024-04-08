@@ -13,14 +13,12 @@ import GRPC
 import NIOCore
 import NIOPosix
 
-protocol NetworkRepositoryProtocol {
-//    init(chatClient: any ChatgRPCClienteProtocol, gameClient: any GamegRPCClienteProtocol)
-    
+protocol NetworkRepositoryProtocol {    
     var currentUser: String { get set }
     var chatMessagePublisher: PassthroughSubject<ChatMessage, Never> { get set }
     var movePublisher: PassthroughSubject<Move, Never> { get set }
     
-    func connect()
+    func connect() async -> ConnectionState?
     func sendMessage(_ message: ChatMessage, userSender: String) async
     func sendMove(_ move: Move)
     func receiveMessages() async
@@ -34,10 +32,11 @@ class NetworkRepository: NetworkRepositoryProtocol {
     
     private var chatLocalMapper: any ChatMessageLocalMapperProtocol = ChatMessageLocalMapper()
     private var chatRemoteMapper: any ChatMessageRemoteMapperProtocol = ChatMessageRemoteMapper()
+    private var gameConnectionMapper: any ClientStateMapperProtocol = ClientStateMapper()
     
-    var statePublisher = PassthroughSubject<ConnectionState, Never>()
     var chatMessagePublisher = PassthroughSubject<ChatMessage, Never>()
     var movePublisher = PassthroughSubject<Move, Never>()
+    
     private var cancellables = Set<AnyCancellable>()
         
     required init(
@@ -53,8 +52,18 @@ class NetworkRepository: NetworkRepositoryProtocol {
 
     }
     
-    func connect() {
-
+    func connect() async -> ConnectionState? {
+        do {
+            let request = Game_User.with { request in
+                request.name = currentUser
+            }
+            let result = try await gameClient.connect(user: request)
+            let state = gameConnectionMapper.mapToDomain(StateConnectType(rawValue: result.state)!)
+            return state
+        } catch {
+            print(error)
+        }
+        return nil
     }
     
     func sendMessage(_ message: ChatMessage, userSender: String) async {
@@ -89,7 +98,7 @@ class NetworkRepository: NetworkRepositoryProtocol {
 }
 
 extension NetworkRepository {
-    enum MessagesType: String {
+    enum StateConnectType: String {
         case START_GAME
         case FIRST_TO_CONNECT
     }

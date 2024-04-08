@@ -21,7 +21,9 @@ struct GameView: View {
                         ipAddress: $viewModel.ipAddress,
                         userName: $viewModel.currentUserName
                     ) {
-                        viewModel.start()
+                        Task {
+                            await viewModel.start()                            
+                        }
                     }
                 case .loading:
                     ProgressView()

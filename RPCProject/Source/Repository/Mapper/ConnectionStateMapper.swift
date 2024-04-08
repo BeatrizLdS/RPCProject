@@ -8,19 +8,15 @@
 import Foundation
 import Network
 
-protocol ClientStateMapperProtocol: DomainEntityMapper where DTO == NWConnection.State, DomainEntity == ConnectionState { }
+protocol ClientStateMapperProtocol: DomainEntityMapper where DTO == NetworkRepository.StateConnectType, DomainEntity == ConnectionState { }
 
 class ClientStateMapper: ClientStateMapperProtocol {
-    func mapToDomain(_ dto: NWConnection.State) -> ConnectionState {
+    func mapToDomain(_ dto: NetworkRepository.StateConnectType) -> ConnectionState {
         switch dto {
-        case .preparing:
-            return .loadingConnection
-        case .ready:
-            return .connectionReady
-        case .cancelled:
-            return .connectionCancelled
-        default:
-            return .connectionError
+        case .START_GAME:
+            return .startGame
+        case .FIRST_TO_CONNECT:
+            return .firstToConnect
         }
     }
 }

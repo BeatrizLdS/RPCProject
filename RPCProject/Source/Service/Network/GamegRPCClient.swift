@@ -9,10 +9,11 @@ import Foundation
 import GRPC
 import NIOCore
 import NIOPosix
+import Combine
 
 protocol GamegRPCClienteProtocol: ClientProtocol where Connection == ClientConnection {
     var client: Game_GameServiceAsyncClient { get set }
-    func connect(user: Game_User) async
+    func connect(user: Game_User) async throws -> Game_GameState
 }
 
 class GamegRPCClient: GamegRPCClienteProtocol {
@@ -29,12 +30,9 @@ class GamegRPCClient: GamegRPCClienteProtocol {
         self.client = Game_GameServiceAsyncClient(channel: self.connection!)
     }
     
-    func connect(user: Game_User) async {
-        do {
-            let result = try await client.connect(user)
-            print(result)
-        } catch {
-            print(error)
-        }
+    func connect(user: Game_User) async throws -> Game_GameState {
+        return (
+            try await client.connect(user)
+        )
     }
 }
