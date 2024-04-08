@@ -64,8 +64,8 @@ struct BoardView: View {
                         .stroke(Color.gray, lineWidth: 5)
                 }
                 .onTapGesture {
-                    withAnimation {
-                        viewModel.moveTo(currentSpace)
+                    Task {
+                        await viewModel.moveTo(currentSpace)
                     }
                 }
         )

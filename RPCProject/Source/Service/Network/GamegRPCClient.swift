@@ -14,6 +14,7 @@ import Combine
 protocol GamegRPCClienteProtocol: ClientProtocol where Connection == ClientConnection {
     var client: Game_GameServiceAsyncClient { get set }
     func connect(user: Game_User) async throws -> Game_GameState
+    func sendMove(move: Game_Move) async
 }
 
 class GamegRPCClient: GamegRPCClienteProtocol {
@@ -34,5 +35,13 @@ class GamegRPCClient: GamegRPCClienteProtocol {
         return (
             try await client.connect(user)
         )
+    }
+    
+    func sendMove(move: Game_Move) async {
+        do {
+            let _ = try await client.sendMove(move)
+        } catch {
+            print(error)
+        }
     }
 }

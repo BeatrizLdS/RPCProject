@@ -20,7 +20,7 @@ protocol NetworkRepositoryProtocol {
     
     func connect() async -> ConnectionState?
     func sendMessage(_ message: ChatMessage, userSender: String) async
-    func sendMove(_ move: Move)
+    func sendMove(_ move: Move) async
     func receiveMessages() async
 }
 
@@ -48,10 +48,6 @@ class NetworkRepository: NetworkRepositoryProtocol {
         setSubscriptions()
     }
     
-    func sendMove(_ move: Move) {
-
-    }
-    
     func connect() async -> ConnectionState? {
         do {
             let request = Game_User.with { request in
@@ -64,6 +60,19 @@ class NetworkRepository: NetworkRepositoryProtocol {
             print(error)
         }
         return nil
+    }
+    
+    func sendMove(_ move: Move) async {
+        do {
+            let moveRequest = Game_Move.with { request in
+                request.endGame = move.endGame ?? false
+                request.restartGame = move.retartGame ?? false
+                request.moveFrom = Int32(move.moveFrom!)
+                request.moveTo = Int32(move.moveTo!)
+                request.removed = Int32(move.removed!)
+            }
+            await gameClient.sendMove(move: moveRequest)
+        }
     }
     
     func sendMessage(_ message: ChatMessage, userSender: String) async {

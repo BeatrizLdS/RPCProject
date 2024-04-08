@@ -20,6 +20,17 @@ internal protocol Game_GameServiceClientProtocol: GRPCClient {
     _ request: Game_User,
     callOptions: CallOptions?
   ) -> UnaryCall<Game_User, Game_GameState>
+
+  func sendMove(
+    _ request: Game_Move,
+    callOptions: CallOptions?
+  ) -> UnaryCall<Game_Move, Game_Move>
+
+  func gameStream(
+    _ request: Game_Empty,
+    callOptions: CallOptions?,
+    handler: @escaping (Game_Move) -> Void
+  ) -> ServerStreamingCall<Game_Empty, Game_Move>
 }
 
 extension Game_GameServiceClientProtocol {
@@ -42,6 +53,45 @@ extension Game_GameServiceClientProtocol {
       request: request,
       callOptions: callOptions ?? self.defaultCallOptions,
       interceptors: self.interceptors?.makeConnectInterceptors() ?? []
+    )
+  }
+
+  /// Unary call to SendMove
+  ///
+  /// - Parameters:
+  ///   - request: Request to send to SendMove.
+  ///   - callOptions: Call options.
+  /// - Returns: A `UnaryCall` with futures for the metadata, status and response.
+  internal func sendMove(
+    _ request: Game_Move,
+    callOptions: CallOptions? = nil
+  ) -> UnaryCall<Game_Move, Game_Move> {
+    return self.makeUnaryCall(
+      path: Game_GameServiceClientMetadata.Methods.sendMove.path,
+      request: request,
+      callOptions: callOptions ?? self.defaultCallOptions,
+      interceptors: self.interceptors?.makeSendMoveInterceptors() ?? []
+    )
+  }
+
+  /// Server streaming call to GameStream
+  ///
+  /// - Parameters:
+  ///   - request: Request to send to GameStream.
+  ///   - callOptions: Call options.
+  ///   - handler: A closure called when each response is received from the server.
+  /// - Returns: A `ServerStreamingCall` with futures for the metadata and status.
+  internal func gameStream(
+    _ request: Game_Empty,
+    callOptions: CallOptions? = nil,
+    handler: @escaping (Game_Move) -> Void
+  ) -> ServerStreamingCall<Game_Empty, Game_Move> {
+    return self.makeServerStreamingCall(
+      path: Game_GameServiceClientMetadata.Methods.gameStream.path,
+      request: request,
+      callOptions: callOptions ?? self.defaultCallOptions,
+      interceptors: self.interceptors?.makeGameStreamInterceptors() ?? [],
+      handler: handler
     )
   }
 }
@@ -112,6 +162,16 @@ internal protocol Game_GameServiceAsyncClientProtocol: GRPCClient {
     _ request: Game_User,
     callOptions: CallOptions?
   ) -> GRPCAsyncUnaryCall<Game_User, Game_GameState>
+
+  func makeSendMoveCall(
+    _ request: Game_Move,
+    callOptions: CallOptions?
+  ) -> GRPCAsyncUnaryCall<Game_Move, Game_Move>
+
+  func makeGameStreamCall(
+    _ request: Game_Empty,
+    callOptions: CallOptions?
+  ) -> GRPCAsyncServerStreamingCall<Game_Empty, Game_Move>
 }
 
 @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
@@ -135,6 +195,30 @@ extension Game_GameServiceAsyncClientProtocol {
       interceptors: self.interceptors?.makeConnectInterceptors() ?? []
     )
   }
+
+  internal func makeSendMoveCall(
+    _ request: Game_Move,
+    callOptions: CallOptions? = nil
+  ) -> GRPCAsyncUnaryCall<Game_Move, Game_Move> {
+    return self.makeAsyncUnaryCall(
+      path: Game_GameServiceClientMetadata.Methods.sendMove.path,
+      request: request,
+      callOptions: callOptions ?? self.defaultCallOptions,
+      interceptors: self.interceptors?.makeSendMoveInterceptors() ?? []
+    )
+  }
+
+  internal func makeGameStreamCall(
+    _ request: Game_Empty,
+    callOptions: CallOptions? = nil
+  ) -> GRPCAsyncServerStreamingCall<Game_Empty, Game_Move> {
+    return self.makeAsyncServerStreamingCall(
+      path: Game_GameServiceClientMetadata.Methods.gameStream.path,
+      request: request,
+      callOptions: callOptions ?? self.defaultCallOptions,
+      interceptors: self.interceptors?.makeGameStreamInterceptors() ?? []
+    )
+  }
 }
 
 @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
@@ -148,6 +232,30 @@ extension Game_GameServiceAsyncClientProtocol {
       request: request,
       callOptions: callOptions ?? self.defaultCallOptions,
       interceptors: self.interceptors?.makeConnectInterceptors() ?? []
+    )
+  }
+
+  internal func sendMove(
+    _ request: Game_Move,
+    callOptions: CallOptions? = nil
+  ) async throws -> Game_Move {
+    return try await self.performAsyncUnaryCall(
+      path: Game_GameServiceClientMetadata.Methods.sendMove.path,
+      request: request,
+      callOptions: callOptions ?? self.defaultCallOptions,
+      interceptors: self.interceptors?.makeSendMoveInterceptors() ?? []
+    )
+  }
+
+  internal func gameStream(
+    _ request: Game_Empty,
+    callOptions: CallOptions? = nil
+  ) -> GRPCAsyncResponseStream<Game_Move> {
+    return self.performAsyncServerStreamingCall(
+      path: Game_GameServiceClientMetadata.Methods.gameStream.path,
+      request: request,
+      callOptions: callOptions ?? self.defaultCallOptions,
+      interceptors: self.interceptors?.makeGameStreamInterceptors() ?? []
     )
   }
 }
@@ -173,6 +281,12 @@ internal protocol Game_GameServiceClientInterceptorFactoryProtocol: Sendable {
 
   /// - Returns: Interceptors to use when invoking 'connect'.
   func makeConnectInterceptors() -> [ClientInterceptor<Game_User, Game_GameState>]
+
+  /// - Returns: Interceptors to use when invoking 'sendMove'.
+  func makeSendMoveInterceptors() -> [ClientInterceptor<Game_Move, Game_Move>]
+
+  /// - Returns: Interceptors to use when invoking 'gameStream'.
+  func makeGameStreamInterceptors() -> [ClientInterceptor<Game_Empty, Game_Move>]
 }
 
 internal enum Game_GameServiceClientMetadata {
@@ -181,6 +295,8 @@ internal enum Game_GameServiceClientMetadata {
     fullName: "game.GameService",
     methods: [
       Game_GameServiceClientMetadata.Methods.connect,
+      Game_GameServiceClientMetadata.Methods.sendMove,
+      Game_GameServiceClientMetadata.Methods.gameStream,
     ]
   )
 
@@ -190,6 +306,18 @@ internal enum Game_GameServiceClientMetadata {
       path: "/game.GameService/Connect",
       type: GRPCCallType.unary
     )
+
+    internal static let sendMove = GRPCMethodDescriptor(
+      name: "SendMove",
+      path: "/game.GameService/SendMove",
+      type: GRPCCallType.unary
+    )
+
+    internal static let gameStream = GRPCMethodDescriptor(
+      name: "GameStream",
+      path: "/game.GameService/GameStream",
+      type: GRPCCallType.serverStreaming
+    )
   }
 }
 
@@ -198,6 +326,10 @@ internal protocol Game_GameServiceProvider: CallHandlerProvider {
   var interceptors: Game_GameServiceServerInterceptorFactoryProtocol? { get }
 
   func connect(request: Game_User, context: StatusOnlyCallContext) -> EventLoopFuture<Game_GameState>
+
+  func sendMove(request: Game_Move, context: StatusOnlyCallContext) -> EventLoopFuture<Game_Move>
+
+  func gameStream(request: Game_Empty, context: StreamingResponseCallContext<Game_Move>) -> EventLoopFuture<GRPCStatus>
 }
 
 extension Game_GameServiceProvider {
@@ -221,6 +353,24 @@ extension Game_GameServiceProvider {
         userFunction: self.connect(request:context:)
       )
 
+    case "SendMove":
+      return UnaryServerHandler(
+        context: context,
+        requestDeserializer: ProtobufDeserializer<Game_Move>(),
+        responseSerializer: ProtobufSerializer<Game_Move>(),
+        interceptors: self.interceptors?.makeSendMoveInterceptors() ?? [],
+        userFunction: self.sendMove(request:context:)
+      )
+
+    case "GameStream":
+      return ServerStreamingServerHandler(
+        context: context,
+        requestDeserializer: ProtobufDeserializer<Game_Empty>(),
+        responseSerializer: ProtobufSerializer<Game_Move>(),
+        interceptors: self.interceptors?.makeGameStreamInterceptors() ?? [],
+        userFunction: self.gameStream(request:context:)
+      )
+
     default:
       return nil
     }
@@ -237,6 +387,17 @@ internal protocol Game_GameServiceAsyncProvider: CallHandlerProvider, Sendable {
     request: Game_User,
     context: GRPCAsyncServerCallContext
   ) async throws -> Game_GameState
+
+  func sendMove(
+    request: Game_Move,
+    context: GRPCAsyncServerCallContext
+  ) async throws -> Game_Move
+
+  func gameStream(
+    request: Game_Empty,
+    responseStream: GRPCAsyncResponseStreamWriter<Game_Move>,
+    context: GRPCAsyncServerCallContext
+  ) async throws
 }
 
 @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
@@ -267,6 +428,24 @@ extension Game_GameServiceAsyncProvider {
         wrapping: { try await self.connect(request: $0, context: $1) }
       )
 
+    case "SendMove":
+      return GRPCAsyncServerHandler(
+        context: context,
+        requestDeserializer: ProtobufDeserializer<Game_Move>(),
+        responseSerializer: ProtobufSerializer<Game_Move>(),
+        interceptors: self.interceptors?.makeSendMoveInterceptors() ?? [],
+        wrapping: { try await self.sendMove(request: $0, context: $1) }
+      )
+
+    case "GameStream":
+      return GRPCAsyncServerHandler(
+        context: context,
+        requestDeserializer: ProtobufDeserializer<Game_Empty>(),
+        responseSerializer: ProtobufSerializer<Game_Move>(),
+        interceptors: self.interceptors?.makeGameStreamInterceptors() ?? [],
+        wrapping: { try await self.gameStream(request: $0, responseStream: $1, context: $2) }
+      )
+
     default:
       return nil
     }
@@ -278,6 +457,14 @@ internal protocol Game_GameServiceServerInterceptorFactoryProtocol: Sendable {
   /// - Returns: Interceptors to use when handling 'connect'.
   ///   Defaults to calling `self.makeInterceptors()`.
   func makeConnectInterceptors() -> [ServerInterceptor<Game_User, Game_GameState>]
+
+  /// - Returns: Interceptors to use when handling 'sendMove'.
+  ///   Defaults to calling `self.makeInterceptors()`.
+  func makeSendMoveInterceptors() -> [ServerInterceptor<Game_Move, Game_Move>]
+
+  /// - Returns: Interceptors to use when handling 'gameStream'.
+  ///   Defaults to calling `self.makeInterceptors()`.
+  func makeGameStreamInterceptors() -> [ServerInterceptor<Game_Empty, Game_Move>]
 }
 
 internal enum Game_GameServiceServerMetadata {
@@ -286,6 +473,8 @@ internal enum Game_GameServiceServerMetadata {
     fullName: "game.GameService",
     methods: [
       Game_GameServiceServerMetadata.Methods.connect,
+      Game_GameServiceServerMetadata.Methods.sendMove,
+      Game_GameServiceServerMetadata.Methods.gameStream,
     ]
   )
 
@@ -294,6 +483,18 @@ internal enum Game_GameServiceServerMetadata {
       name: "Connect",
       path: "/game.GameService/Connect",
       type: GRPCCallType.unary
+    )
+
+    internal static let sendMove = GRPCMethodDescriptor(
+      name: "SendMove",
+      path: "/game.GameService/SendMove",
+      type: GRPCCallType.unary
+    )
+
+    internal static let gameStream = GRPCMethodDescriptor(
+      name: "GameStream",
+      path: "/game.GameService/GameStream",
+      type: GRPCCallType.serverStreaming
     )
   }
 }

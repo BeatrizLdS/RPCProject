@@ -50,7 +50,9 @@ struct GameView: View {
                     }
                     .overlay(alignment: .topTrailing) {
                         Button {
-                            viewModel.playAgain()
+                            Task {
+                                await viewModel.playAgain()
+                            }
                         } label: {
                             Image(systemName: "arrow.counterclockwise.circle")
                                 .resizable()
@@ -69,7 +71,9 @@ struct GameView: View {
                 case .endGame:
                     Text(viewModel.isWinner ? "You Win" : "You Lose")
                     Button {
-                        viewModel.playAgain()
+                        Task {
+                            await viewModel.playAgain()                            
+                        }
                     } label: {
                         Text("Play again")
                     }
