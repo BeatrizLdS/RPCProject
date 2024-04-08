@@ -8,11 +8,7 @@
 import SwiftUI
 
 struct GameView: View {
-    @ObservedObject private var viewModel: ViewModel = ViewModel(
-        repository: NetworkRepository(
-            chatClient: ChatgRPCCliente(host: "127.0.0.1", port: 1100)
-        )
-    )
+    @ObservedObject private var viewModel: ViewModel = ViewModel()
     
     @State var text: String = ""
     

@@ -49,7 +49,7 @@ extension ViewModel: BoardViewModelProtocol {
     
     func playAgain() {
         let move = Move(moveFrom: nil, moveTo: nil, removed: nil, endGame: nil, retartGame: true)
-        repository.sendMove(move)
+        repository?.sendMove(move)
         viewState = .inGame
         startGame()
     }
@@ -104,7 +104,7 @@ extension ViewModel: BoardViewModelProtocol {
             retartGame: nil
         )
         
-        self.repository.sendMove(currentMove)
+        self.repository?.sendMove(currentMove)
         
         selectedPiace = nil
         avaliableMoviments = []

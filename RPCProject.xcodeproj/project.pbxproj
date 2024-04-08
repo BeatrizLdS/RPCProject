@@ -24,9 +24,6 @@
 		FFE4BB0A2BBC643700771CC5 /* ConnectionStateMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFE4BB092BBC643700771CC5 /* ConnectionStateMapper.swift */; };
 		FFE4BB0C2BBC64A600771CC5 /* Repository.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFE4BB0B2BBC64A600771CC5 /* Repository.swift */; };
 		FFE4BB0F2BBC669C00771CC5 /* NetworkProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFE4BB0E2BBC669C00771CC5 /* NetworkProtocols.swift */; };
-		FFE4BB122BBC66F000771CC5 /* ClientUDP.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFE4BB112BBC66F000771CC5 /* ClientUDP.swift */; };
-		FFE4BB142BBC67D900771CC5 /* ClientTCP.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFE4BB132BBC67D900771CC5 /* ClientTCP.swift */; };
-		FFE4BB162BBCE56D00771CC5 /* ClientRPC.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFE4BB152BBCE56D00771CC5 /* ClientRPC.swift */; };
 		FFE4BB182BBD031700771CC5 /* MoveMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFE4BB172BBD031700771CC5 /* MoveMapper.swift */; };
 		FFE4BB202BC0589500771CC5 /* GRPC in Frameworks */ = {isa = PBXBuildFile; productRef = FFE4BB1F2BC0589500771CC5 /* GRPC */; };
 		FFE4BB222BC0589500771CC5 /* protoc-gen-grpc-swift in Frameworks */ = {isa = PBXBuildFile; productRef = FFE4BB212BC0589500771CC5 /* protoc-gen-grpc-swift */; };
@@ -35,6 +32,9 @@
 		FFE4BB2E2BC3A2BF00771CC5 /* ChatMessageMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFE4BB2D2BC3A2BF00771CC5 /* ChatMessageMapper.swift */; };
 		FFE4BB4C2BC4304200771CC5 /* chat.grpc.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFE4BB4B2BC4304200771CC5 /* chat.grpc.swift */; };
 		FFE4BB4E2BC4305F00771CC5 /* chat.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFE4BB4D2BC4305F00771CC5 /* chat.pb.swift */; };
+		FFE4BB502BC439E800771CC5 /* GamegRPCClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFE4BB4F2BC439E800771CC5 /* GamegRPCClient.swift */; };
+		FFE4BB522BC43A6A00771CC5 /* game.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFE4BB512BC43A6A00771CC5 /* game.pb.swift */; };
+		FFE4BB542BC43A8100771CC5 /* game.grpc.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFE4BB532BC43A8100771CC5 /* game.grpc.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -57,15 +57,15 @@
 		FFE4BB092BBC643700771CC5 /* ConnectionStateMapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionStateMapper.swift; sourceTree = "<group>"; };
 		FFE4BB0B2BBC64A600771CC5 /* Repository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Repository.swift; sourceTree = "<group>"; };
 		FFE4BB0E2BBC669C00771CC5 /* NetworkProtocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkProtocols.swift; sourceTree = "<group>"; };
-		FFE4BB112BBC66F000771CC5 /* ClientUDP.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientUDP.swift; sourceTree = "<group>"; };
-		FFE4BB132BBC67D900771CC5 /* ClientTCP.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientTCP.swift; sourceTree = "<group>"; };
-		FFE4BB152BBCE56D00771CC5 /* ClientRPC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientRPC.swift; sourceTree = "<group>"; };
 		FFE4BB172BBD031700771CC5 /* MoveMapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoveMapper.swift; sourceTree = "<group>"; };
 		FFE4BB282BC1F46300771CC5 /* ChatgRPCCliente.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatgRPCCliente.swift; sourceTree = "<group>"; };
 		FFE4BB2A2BC380A900771CC5 /* InputAddressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputAddressView.swift; sourceTree = "<group>"; };
 		FFE4BB2D2BC3A2BF00771CC5 /* ChatMessageMapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageMapper.swift; sourceTree = "<group>"; };
 		FFE4BB4B2BC4304200771CC5 /* chat.grpc.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = chat.grpc.swift; sourceTree = "<group>"; };
 		FFE4BB4D2BC4305F00771CC5 /* chat.pb.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = chat.pb.swift; sourceTree = "<group>"; };
+		FFE4BB4F2BC439E800771CC5 /* GamegRPCClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GamegRPCClient.swift; sourceTree = "<group>"; };
+		FFE4BB512BC43A6A00771CC5 /* game.pb.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = game.pb.swift; sourceTree = "<group>"; };
+		FFE4BB532BC43A8100771CC5 /* game.grpc.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = game.grpc.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -251,10 +251,8 @@
 		FFE4BB102BBC66D900771CC5 /* Network */ = {
 			isa = PBXGroup;
 			children = (
-				FFE4BB112BBC66F000771CC5 /* ClientUDP.swift */,
-				FFE4BB132BBC67D900771CC5 /* ClientTCP.swift */,
-				FFE4BB152BBCE56D00771CC5 /* ClientRPC.swift */,
 				FFE4BB282BC1F46300771CC5 /* ChatgRPCCliente.swift */,
+				FFE4BB4F2BC439E800771CC5 /* GamegRPCClient.swift */,
 			);
 			path = Network;
 			sourceTree = "<group>";
@@ -264,6 +262,8 @@
 			children = (
 				FFE4BB4B2BC4304200771CC5 /* chat.grpc.swift */,
 				FFE4BB4D2BC4305F00771CC5 /* chat.pb.swift */,
+				FFE4BB512BC43A6A00771CC5 /* game.pb.swift */,
+				FFE4BB532BC43A8100771CC5 /* game.grpc.swift */,
 			);
 			path = ModelsRPC;
 			sourceTree = "<group>";
@@ -353,19 +353,20 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FFE4BB142BBC67D900771CC5 /* ClientTCP.swift in Sources */,
 				FFE4BB0F2BBC669C00771CC5 /* NetworkProtocols.swift in Sources */,
 				FFE4BB2E2BC3A2BF00771CC5 /* ChatMessageMapper.swift in Sources */,
 				FFE4BB0A2BBC643700771CC5 /* ConnectionStateMapper.swift in Sources */,
 				FFE4BB4C2BC4304200771CC5 /* chat.grpc.swift in Sources */,
-				FFE4BB162BBCE56D00771CC5 /* ClientRPC.swift in Sources */,
 				FFE4BAF92BBC60A400771CC5 /* ChatView.swift in Sources */,
 				FFE4BB082BBC641B00771CC5 /* DomainEntityMapperProtocol.swift in Sources */,
 				FFE4BB0C2BBC64A600771CC5 /* Repository.swift in Sources */,
 				FFE4BB182BBD031700771CC5 /* MoveMapper.swift in Sources */,
+				FFE4BB542BC43A8100771CC5 /* game.grpc.swift in Sources */,
+				FFE4BB502BC439E800771CC5 /* GamegRPCClient.swift in Sources */,
 				FFE4BAF72BBC609900771CC5 /* BoardView.swift in Sources */,
 				FFE4BAFF2BBC611900771CC5 /* ConnectionState.swift in Sources */,
 				FFE4BB4E2BC4305F00771CC5 /* chat.pb.swift in Sources */,
+				FFE4BB522BC43A6A00771CC5 /* game.pb.swift in Sources */,
 				FFE4BAFB2BBC60D300771CC5 /* UIApplicationExtension.swift in Sources */,
 				FFE4BB012BBC613600771CC5 /* Move.swift in Sources */,
 				FFE4BB292BC1F46300771CC5 /* ChatgRPCCliente.swift in Sources */,
@@ -374,7 +375,6 @@
 				FFE4BADC2BBC5EF200771CC5 /* GameView.swift in Sources */,
 				FFE4BB052BBC637500771CC5 /* GameViewModel.swift in Sources */,
 				FFE4BB2B2BC380A900771CC5 /* InputAddressView.swift in Sources */,
-				FFE4BB122BBC66F000771CC5 /* ClientUDP.swift in Sources */,
 				FFE4BADA2BBC5EF200771CC5 /* RPCProjectApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

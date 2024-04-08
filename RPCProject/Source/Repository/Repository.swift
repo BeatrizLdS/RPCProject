@@ -14,7 +14,7 @@ import NIOCore
 import NIOPosix
 
 protocol NetworkRepositoryProtocol {
-    init(chatClient: any ChatgRPCClienteProtocol)
+//    init(chatClient: any ChatgRPCClienteProtocol, gameClient: any GamegRPCClienteProtocol)
     
     var currentUser: String { get set }
     var chatMessagePublisher: PassthroughSubject<ChatMessage, Never> { get set }
@@ -28,7 +28,9 @@ protocol NetworkRepositoryProtocol {
 
 class NetworkRepository: NetworkRepositoryProtocol {
     var currentUser: String = ""
+
     private var chatClient: any ChatgRPCClienteProtocol
+    private var gameClient: any GamegRPCClienteProtocol
     
     private var chatLocalMapper: any ChatMessageLocalMapperProtocol = ChatMessageLocalMapper()
     private var chatRemoteMapper: any ChatMessageRemoteMapperProtocol = ChatMessageRemoteMapper()
@@ -38,8 +40,12 @@ class NetworkRepository: NetworkRepositoryProtocol {
     var movePublisher = PassthroughSubject<Move, Never>()
     private var cancellables = Set<AnyCancellable>()
         
-    required init(chatClient: any ChatgRPCClienteProtocol) {
+    required init(
+        chatClient: any ChatgRPCClienteProtocol,
+        gameClient: any GamegRPCClienteProtocol
+    ) {
         self.chatClient = chatClient
+        self.gameClient = gameClient
         setSubscriptions()
     }
     
@@ -88,8 +94,8 @@ extension NetworkRepository {
         case FIRST_TO_CONNECT
     }
     
-    enum CommunicationPorts: String {
-        case broker = "1050"
-        case gRPCserver = "1100"
+    enum CommunicationPorts: Int {
+        case gamegRPC = 1200
+        case chatgRPC = 1100
     }
 }

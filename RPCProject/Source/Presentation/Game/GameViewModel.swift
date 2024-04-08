@@ -16,11 +16,7 @@ class ViewModel: ObservableObject {
     @Published var selectedPiace: Int?
     @Published var avaliableMoviments: [Int]?
     @Published var ipAddress: String = "127.0.0.1"
-    @Published var currentUserName: String = "" {
-        didSet {
-            repository.currentUser = currentUserName
-        }
-    }
+    @Published var currentUserName: String = ""
     
     var isFirst: Bool = false
     @Published var isTurn: Bool = false
@@ -46,15 +42,16 @@ class ViewModel: ObservableObject {
             }
         }
     }
-    var repository: any NetworkRepositoryProtocol
+    var repository: (any NetworkRepositoryProtocol)?
     private var cancellables = Set<AnyCancellable>()
     
-    init(repository: any NetworkRepositoryProtocol) {
-        self.repository = repository
-        setSubscriptions()
-    }
-    
     func start() {
+        self.repository = NetworkRepository(
+            chatClient: ChatgRPCCliente(host: ipAddress, port: NetworkRepository.CommunicationPorts.chatgRPC.rawValue),
+            gameClient: GamegRPCClient(host: ipAddress, port: NetworkRepository.CommunicationPorts.gamegRPC.rawValue)
+        )
+        self.repository!.currentUser = currentUserName
+        setSubscriptions()
         viewState = .inGame
     }
     
@@ -62,18 +59,18 @@ class ViewModel: ObservableObject {
         let newMessage = ChatMessage(
             sender: .localUser,
             content: inputUser)
-        await repository.sendMessage(newMessage, userSender: currentUserName)
+        await repository?.sendMessage(newMessage, userSender: currentUserName)
         DispatchQueue.main.async {
             self.inputUser = ""
         }
     }
     
     func receiveMessages() async {
-        await repository.receiveMessages()
+        await repository?.receiveMessages()
     }
     
     private func setSubscriptions() {
-        repository.chatMessagePublisher
+        repository?.chatMessagePublisher
             .sink { newMessage in
                 DispatchQueue.main.async {
                     self.messages.append(newMessage)
@@ -81,7 +78,7 @@ class ViewModel: ObservableObject {
             }
             .store(in: &cancellables)
         
-        repository.movePublisher.sink { [weak self] move in
+        repository?.movePublisher.sink { [weak self] move in
             self?.receiveMove(move)
         }
         .store(in: &cancellables)
