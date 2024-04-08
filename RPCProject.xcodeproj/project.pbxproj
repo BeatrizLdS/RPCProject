@@ -28,6 +28,13 @@
 		FFE4BB142BBC67D900771CC5 /* ClientTCP.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFE4BB132BBC67D900771CC5 /* ClientTCP.swift */; };
 		FFE4BB162BBCE56D00771CC5 /* ClientRPC.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFE4BB152BBCE56D00771CC5 /* ClientRPC.swift */; };
 		FFE4BB182BBD031700771CC5 /* MoveMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFE4BB172BBD031700771CC5 /* MoveMapper.swift */; };
+		FFE4BB202BC0589500771CC5 /* GRPC in Frameworks */ = {isa = PBXBuildFile; productRef = FFE4BB1F2BC0589500771CC5 /* GRPC */; };
+		FFE4BB222BC0589500771CC5 /* protoc-gen-grpc-swift in Frameworks */ = {isa = PBXBuildFile; productRef = FFE4BB212BC0589500771CC5 /* protoc-gen-grpc-swift */; };
+		FFE4BB292BC1F46300771CC5 /* ChatgRPCCliente.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFE4BB282BC1F46300771CC5 /* ChatgRPCCliente.swift */; };
+		FFE4BB2B2BC380A900771CC5 /* InputAddressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFE4BB2A2BC380A900771CC5 /* InputAddressView.swift */; };
+		FFE4BB2E2BC3A2BF00771CC5 /* ChatMessageMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFE4BB2D2BC3A2BF00771CC5 /* ChatMessageMapper.swift */; };
+		FFE4BB4C2BC4304200771CC5 /* chat.grpc.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFE4BB4B2BC4304200771CC5 /* chat.grpc.swift */; };
+		FFE4BB4E2BC4305F00771CC5 /* chat.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFE4BB4D2BC4305F00771CC5 /* chat.pb.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -54,6 +61,11 @@
 		FFE4BB132BBC67D900771CC5 /* ClientTCP.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientTCP.swift; sourceTree = "<group>"; };
 		FFE4BB152BBCE56D00771CC5 /* ClientRPC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientRPC.swift; sourceTree = "<group>"; };
 		FFE4BB172BBD031700771CC5 /* MoveMapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoveMapper.swift; sourceTree = "<group>"; };
+		FFE4BB282BC1F46300771CC5 /* ChatgRPCCliente.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatgRPCCliente.swift; sourceTree = "<group>"; };
+		FFE4BB2A2BC380A900771CC5 /* InputAddressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputAddressView.swift; sourceTree = "<group>"; };
+		FFE4BB2D2BC3A2BF00771CC5 /* ChatMessageMapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageMapper.swift; sourceTree = "<group>"; };
+		FFE4BB4B2BC4304200771CC5 /* chat.grpc.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = chat.grpc.swift; sourceTree = "<group>"; };
+		FFE4BB4D2BC4305F00771CC5 /* chat.pb.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = chat.pb.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -61,7 +73,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FFE4BB202BC0589500771CC5 /* GRPC in Frameworks */,
 				FFE4BAEA2BBC5F8600771CC5 /* Network.framework in Frameworks */,
+				FFE4BB222BC0589500771CC5 /* protoc-gen-grpc-swift in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -162,6 +176,7 @@
 		FFE4BAF02BBC600600771CC5 /* Service */ = {
 			isa = PBXGroup;
 			children = (
+				FFE4BB252BC1F14900771CC5 /* ModelsRPC */,
 				FFE4BB0D2BBC668700771CC5 /* Protocols */,
 				FFE4BB102BBC66D900771CC5 /* Network */,
 			);
@@ -183,6 +198,7 @@
 				FFE4BAF52BBC606700771CC5 /* Game */,
 				FFE4BAF42BBC606200771CC5 /* Board */,
 				FFE4BAF32BBC605C00771CC5 /* Chat */,
+				FFE4BB2C2BC3912A00771CC5 /* InputAddress */,
 			);
 			path = Presentation;
 			sourceTree = "<group>";
@@ -219,6 +235,7 @@
 				FFE4BB072BBC641B00771CC5 /* DomainEntityMapperProtocol.swift */,
 				FFE4BB092BBC643700771CC5 /* ConnectionStateMapper.swift */,
 				FFE4BB172BBD031700771CC5 /* MoveMapper.swift */,
+				FFE4BB2D2BC3A2BF00771CC5 /* ChatMessageMapper.swift */,
 			);
 			path = Mapper;
 			sourceTree = "<group>";
@@ -237,8 +254,26 @@
 				FFE4BB112BBC66F000771CC5 /* ClientUDP.swift */,
 				FFE4BB132BBC67D900771CC5 /* ClientTCP.swift */,
 				FFE4BB152BBCE56D00771CC5 /* ClientRPC.swift */,
+				FFE4BB282BC1F46300771CC5 /* ChatgRPCCliente.swift */,
 			);
 			path = Network;
+			sourceTree = "<group>";
+		};
+		FFE4BB252BC1F14900771CC5 /* ModelsRPC */ = {
+			isa = PBXGroup;
+			children = (
+				FFE4BB4B2BC4304200771CC5 /* chat.grpc.swift */,
+				FFE4BB4D2BC4305F00771CC5 /* chat.pb.swift */,
+			);
+			path = ModelsRPC;
+			sourceTree = "<group>";
+		};
+		FFE4BB2C2BC3912A00771CC5 /* InputAddress */ = {
+			isa = PBXGroup;
+			children = (
+				FFE4BB2A2BC380A900771CC5 /* InputAddressView.swift */,
+			);
+			path = InputAddress;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -257,6 +292,10 @@
 			dependencies = (
 			);
 			name = RPCProject;
+			packageProductDependencies = (
+				FFE4BB1F2BC0589500771CC5 /* GRPC */,
+				FFE4BB212BC0589500771CC5 /* protoc-gen-grpc-swift */,
+			);
 			productName = RPCProject;
 			productReference = FFE4BAD62BBC5EF200771CC5 /* RPCProject.app */;
 			productType = "com.apple.product-type.application";
@@ -285,6 +324,9 @@
 				Base,
 			);
 			mainGroup = FFE4BACD2BBC5EF200771CC5;
+			packageReferences = (
+				FFE4BB1E2BC0589500771CC5 /* XCRemoteSwiftPackageReference "grpc-swift" */,
+			);
 			productRefGroup = FFE4BAD72BBC5EF200771CC5 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -313,7 +355,9 @@
 			files = (
 				FFE4BB142BBC67D900771CC5 /* ClientTCP.swift in Sources */,
 				FFE4BB0F2BBC669C00771CC5 /* NetworkProtocols.swift in Sources */,
+				FFE4BB2E2BC3A2BF00771CC5 /* ChatMessageMapper.swift in Sources */,
 				FFE4BB0A2BBC643700771CC5 /* ConnectionStateMapper.swift in Sources */,
+				FFE4BB4C2BC4304200771CC5 /* chat.grpc.swift in Sources */,
 				FFE4BB162BBCE56D00771CC5 /* ClientRPC.swift in Sources */,
 				FFE4BAF92BBC60A400771CC5 /* ChatView.swift in Sources */,
 				FFE4BB082BBC641B00771CC5 /* DomainEntityMapperProtocol.swift in Sources */,
@@ -321,12 +365,15 @@
 				FFE4BB182BBD031700771CC5 /* MoveMapper.swift in Sources */,
 				FFE4BAF72BBC609900771CC5 /* BoardView.swift in Sources */,
 				FFE4BAFF2BBC611900771CC5 /* ConnectionState.swift in Sources */,
+				FFE4BB4E2BC4305F00771CC5 /* chat.pb.swift in Sources */,
 				FFE4BAFB2BBC60D300771CC5 /* UIApplicationExtension.swift in Sources */,
 				FFE4BB012BBC613600771CC5 /* Move.swift in Sources */,
+				FFE4BB292BC1F46300771CC5 /* ChatgRPCCliente.swift in Sources */,
 				FFE4BB032BBC634E00771CC5 /* BoardViewModel.swift in Sources */,
 				FFE4BAFD2BBC60FB00771CC5 /* ChatMessage.swift in Sources */,
 				FFE4BADC2BBC5EF200771CC5 /* GameView.swift in Sources */,
 				FFE4BB052BBC637500771CC5 /* GameViewModel.swift in Sources */,
+				FFE4BB2B2BC380A900771CC5 /* InputAddressView.swift in Sources */,
 				FFE4BB122BBC66F000771CC5 /* ClientUDP.swift in Sources */,
 				FFE4BADA2BBC5EF200771CC5 /* RPCProjectApp.swift in Sources */,
 			);
@@ -542,6 +589,30 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		FFE4BB1E2BC0589500771CC5 /* XCRemoteSwiftPackageReference "grpc-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/grpc/grpc-swift.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.22.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		FFE4BB1F2BC0589500771CC5 /* GRPC */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = FFE4BB1E2BC0589500771CC5 /* XCRemoteSwiftPackageReference "grpc-swift" */;
+			productName = GRPC;
+		};
+		FFE4BB212BC0589500771CC5 /* protoc-gen-grpc-swift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = FFE4BB1E2BC0589500771CC5 /* XCRemoteSwiftPackageReference "grpc-swift" */;
+			productName = "protoc-gen-grpc-swift";
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = FFE4BACE2BBC5EF200771CC5 /* Project object */;
 }

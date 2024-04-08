@@ -15,6 +15,12 @@ class ViewModel: ObservableObject {
     @Published var boardSpaces: [Int] = Array(repeating: 1, count: 33)
     @Published var selectedPiace: Int?
     @Published var avaliableMoviments: [Int]?
+    @Published var ipAddress: String = "127.0.0.1"
+    @Published var currentUserName: String = "" {
+        didSet {
+            repository.currentUser = currentUserName
+        }
+    }
     
     var isFirst: Bool = false
     @Published var isTurn: Bool = false
@@ -49,27 +55,29 @@ class ViewModel: ObservableObject {
     }
     
     func start() {
-        repository.connect()
+        viewState = .inGame
     }
     
-    func sendMessage() {
+    func sendMessage() async {
         let newMessage = ChatMessage(
             sender: .localUser,
             content: inputUser)
-        repository.sendMessage(newMessage)
-        inputUser = ""
+        await repository.sendMessage(newMessage, userSender: currentUserName)
+        DispatchQueue.main.async {
+            self.inputUser = ""
+        }
+    }
+    
+    func receiveMessages() async {
+        await repository.receiveMessages()
     }
     
     private func setSubscriptions() {
-        repository.statePublisher
-            .sink { [weak self] state in
-                self?.connectionState = state
-            }
-            .store(in: &cancellables)
-        
         repository.chatMessagePublisher
             .sink { newMessage in
-                self.messages.append(newMessage)
+                DispatchQueue.main.async {
+                    self.messages.append(newMessage)
+                }
             }
             .store(in: &cancellables)
         

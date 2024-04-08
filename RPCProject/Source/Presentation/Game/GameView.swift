@@ -10,10 +10,9 @@ import SwiftUI
 struct GameView: View {
     @ObservedObject private var viewModel: ViewModel = ViewModel(
         repository: NetworkRepository(
-            clientUDP: ClientUDP(),
-            client: ClientRPC(connection: ClientTCP()),
-            clientMappeer: ClientStateMapper()
-        ))
+            chatClient: ChatgRPCCliente(host: "127.0.0.1", port: 1100)
+        )
+    )
     
     @State var text: String = ""
     
@@ -22,10 +21,11 @@ struct GameView: View {
             VStack {
                 switch viewModel.viewState {
                 case .notStarted :
-                    Button {
+                    InputAddressView(
+                        ipAddress: $viewModel.ipAddress,
+                        userName: $viewModel.currentUserName
+                    ) {
                         viewModel.start()
-                    } label: {
-                        Text("Start")
                     }
                 case .loading:
                     ProgressView()
@@ -40,7 +40,14 @@ struct GameView: View {
                         ChatView(
                             text: $viewModel.inputUser,
                             messages: $viewModel.messages) {
-                                viewModel.sendMessage()
+                                Task {
+                                    await viewModel.sendMessage()                                    
+                                }
+                            }
+                            .onAppear {
+                                Task {
+                                    await viewModel.receiveMessages()
+                                }
                             }
                     }
                     .overlay(alignment: .topTrailing) {

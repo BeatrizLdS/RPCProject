@@ -80,9 +80,10 @@ struct BoardView: View {
 
 #Preview {
     BoardView(
-        viewModel: ViewModel(repository: NetworkRepository(
-            clientUDP: ClientUDP(),
-            client: ClientRPC(connection: ClientTCP()),
-            clientMappeer: ClientStateMapper()))
+        viewModel: ViewModel(
+            repository: NetworkRepository(
+                chatClient: ChatgRPCCliente(host: "127.0.0.1", port: 1100)
+            )
+        )
     )
 }
