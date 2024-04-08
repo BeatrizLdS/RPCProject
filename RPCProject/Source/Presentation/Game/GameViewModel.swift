@@ -69,6 +69,10 @@ class ViewModel: ObservableObject {
         await repository?.receiveMessages()
     }
     
+    func receiveMoves() async {
+        await repository?.receiveMoves()
+    }
+    
     private func setSubscriptions() {
         repository?.chatMessagePublisher
             .sink { newMessage in

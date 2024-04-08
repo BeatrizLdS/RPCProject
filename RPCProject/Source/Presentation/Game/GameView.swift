@@ -35,6 +35,11 @@ struct GameView: View {
                             viewModel: viewModel
                         )
                         .background(Color.white)
+                        .onAppear {
+                            Task {
+                                await viewModel.receiveMoves()
+                            }
+                        }
                         ChatView(
                             text: $viewModel.inputUser,
                             messages: $viewModel.messages) {
@@ -48,26 +53,26 @@ struct GameView: View {
                                 }
                             }
                     }
-                    .overlay(alignment: .topTrailing) {
-                        Button {
-                            Task {
-                                await viewModel.playAgain()
-                            }
-                        } label: {
-                            Image(systemName: "arrow.counterclockwise.circle")
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 30, height: 30)
-                                .foregroundColor(.white)
-                                .background {
-                                    Circle()
-                                        .fill(.blue)
-                                        .frame(width: 30, height: 30)
-                                }
-                                .padding(.trailing, 10)
-                        }
-                        .shadow(color:.black.opacity(25), radius: 3)
-                    }
+//                    .overlay(alignment: .topTrailing) {
+//                        Button {
+//                            Task {
+//                                await viewModel.playAgain()
+//                            }
+//                        } label: {
+//                            Image(systemName: "arrow.counterclockwise.circle")
+//                                .resizable()
+//                                .scaledToFit()
+//                                .frame(width: 30, height: 30)
+//                                .foregroundColor(.white)
+//                                .background {
+//                                    Circle()
+//                                        .fill(.blue)
+//                                        .frame(width: 30, height: 30)
+//                                }
+//                                .padding(.trailing, 10)
+//                        }
+//                        .shadow(color:.black.opacity(25), radius: 3)
+//                    }
                 case .endGame:
                     Text(viewModel.isWinner ? "You Win" : "You Lose")
                     Button {

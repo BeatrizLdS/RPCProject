@@ -20,8 +20,9 @@ protocol NetworkRepositoryProtocol {
     
     func connect() async -> ConnectionState?
     func sendMessage(_ message: ChatMessage, userSender: String) async
-    func sendMove(_ move: Move) async
     func receiveMessages() async
+    func sendMove(_ move: Move) async
+    func receiveMoves() async
 }
 
 class NetworkRepository: NetworkRepositoryProtocol {
@@ -33,6 +34,7 @@ class NetworkRepository: NetworkRepositoryProtocol {
     private var chatLocalMapper: any ChatMessageLocalMapperProtocol = ChatMessageLocalMapper()
     private var chatRemoteMapper: any ChatMessageRemoteMapperProtocol = ChatMessageRemoteMapper()
     private var gameConnectionMapper: any ClientStateMapperProtocol = ClientStateMapper()
+    private var moveMapper: any MoveMapperProtocol = MoveMapper()
     
     var chatMessagePublisher = PassthroughSubject<ChatMessage, Never>()
     var movePublisher = PassthroughSubject<Move, Never>()
@@ -89,6 +91,10 @@ class NetworkRepository: NetworkRepositoryProtocol {
         await chatClient.listenForMessages()
     }
     
+    func receiveMoves() async {
+        await gameClient.listenForMoves()
+    }
+    
     func setSubscriptions() {
         chatClient.chatMessagePublisher
             .sink { [weak self] chat_message in
@@ -100,6 +106,14 @@ class NetworkRepository: NetworkRepositoryProtocol {
                     if let chatMessage = self?.chatRemoteMapper.mapToDomain(chat_message) {
                         self?.chatMessagePublisher.send(chatMessage)
                     }
+                }
+            }
+            .store(in: &cancellables)
+        
+        gameClient.movePublisher
+            .sink { [weak self] move in
+                if let currentMove = self?.moveMapper.mapToDomain(move) {
+                    self?.movePublisher.send(currentMove)
                 }
             }
             .store(in: &cancellables)
