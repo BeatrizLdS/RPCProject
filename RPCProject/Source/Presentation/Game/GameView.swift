@@ -8,11 +8,7 @@
 import SwiftUI
 
 struct GameView: View {
-    @ObservedObject private var viewModel: ViewModel = ViewModel(
-        repository: NetworkRepository(
-            chatClient: ChatgRPCCliente(host: "127.0.0.1", port: 1100)
-        )
-    )
+    @ObservedObject private var viewModel: ViewModel = ViewModel()
     
     @State var text: String = ""
     
@@ -25,7 +21,9 @@ struct GameView: View {
                         ipAddress: $viewModel.ipAddress,
                         userName: $viewModel.currentUserName
                     ) {
-                        viewModel.start()
+                        Task {
+                            await viewModel.start()                            
+                        }
                     }
                 case .loading:
                     ProgressView()
@@ -37,6 +35,11 @@ struct GameView: View {
                             viewModel: viewModel
                         )
                         .background(Color.white)
+                        .onAppear {
+                            Task {
+                                await viewModel.receiveMoves()
+                            }
+                        }
                         ChatView(
                             text: $viewModel.inputUser,
                             messages: $viewModel.messages) {
@@ -50,28 +53,32 @@ struct GameView: View {
                                 }
                             }
                     }
-                    .overlay(alignment: .topTrailing) {
-                        Button {
-                            viewModel.playAgain()
-                        } label: {
-                            Image(systemName: "arrow.counterclockwise.circle")
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 30, height: 30)
-                                .foregroundColor(.white)
-                                .background {
-                                    Circle()
-                                        .fill(.blue)
-                                        .frame(width: 30, height: 30)
-                                }
-                                .padding(.trailing, 10)
-                        }
-                        .shadow(color:.black.opacity(25), radius: 3)
-                    }
+//                    .overlay(alignment: .topTrailing) {
+//                        Button {
+//                            Task {
+//                                await viewModel.playAgain()
+//                            }
+//                        } label: {
+//                            Image(systemName: "arrow.counterclockwise.circle")
+//                                .resizable()
+//                                .scaledToFit()
+//                                .frame(width: 30, height: 30)
+//                                .foregroundColor(.white)
+//                                .background {
+//                                    Circle()
+//                                        .fill(.blue)
+//                                        .frame(width: 30, height: 30)
+//                                }
+//                                .padding(.trailing, 10)
+//                        }
+//                        .shadow(color:.black.opacity(25), radius: 3)
+//                    }
                 case .endGame:
                     Text(viewModel.isWinner ? "You Win" : "You Lose")
                     Button {
-                        viewModel.playAgain()
+                        Task {
+                            await viewModel.playAgain()                            
+                        }
                     } label: {
                         Text("Play again")
                     }

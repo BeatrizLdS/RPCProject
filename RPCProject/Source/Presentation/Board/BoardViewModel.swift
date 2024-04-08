@@ -11,7 +11,7 @@ protocol BoardViewModelProtocol: ObservableObject {
     func getCurrentSpaceInBoard(row: Int, col: Int, rate: Int) -> Int
     func startGame()
     func selectPiece(_ newPieceIndex: Int)
-    func moveTo(_ space: Int)
+    func moveTo(_ space: Int) async
     func receiveMove(_ move: Move)
 }
 
@@ -47,9 +47,9 @@ extension ViewModel: BoardViewModelProtocol {
         boardSpaces[16] = 0
     }
     
-    func playAgain() {
+    func playAgain() async {
         let move = Move(moveFrom: nil, moveTo: nil, removed: nil, endGame: nil, retartGame: true)
-        repository.sendMove(move)
+        await repository?.sendMove(move)
         viewState = .inGame
         startGame()
     }
@@ -82,7 +82,7 @@ extension ViewModel: BoardViewModelProtocol {
         self.avaliableMoviments = localAvailableMoviments
     }
     
-    func moveTo(_ space: Int) {
+    func moveTo(_ space: Int) async {
         let canDeadPiaces = findNeighbors(space)
         
         let set1: Set<Int?> = Set(canDeadPiaces.array)
@@ -104,7 +104,7 @@ extension ViewModel: BoardViewModelProtocol {
             retartGame: nil
         )
         
-        self.repository.sendMove(currentMove)
+        await self.repository?.sendMove(currentMove)
         
         selectedPiace = nil
         avaliableMoviments = []
