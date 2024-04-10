@@ -42,7 +42,7 @@ extension ViewModel: BoardViewModelProtocol {
     }
     
     func startGame() {
-        isWinner = false
+        changeIsWinner(to: false)
         boardSpaces = Array(repeating: 1, count: 33)
         boardSpaces[16] = 0
     }
@@ -50,7 +50,8 @@ extension ViewModel: BoardViewModelProtocol {
     func playAgain() async {
         let move = Move(moveFrom: nil, moveTo: nil, removed: nil, endGame: nil, retartGame: true)
         await repository?.sendMove(move)
-        viewState = .inGame
+        
+        changeViewState(to: .inGame)
         startGame()
     }
     
@@ -91,9 +92,9 @@ extension ViewModel: BoardViewModelProtocol {
         let deadPiece = Array(set1.intersection(set2))[0]!
         
         let hasWin = hasWin()
-        isWinner = hasWin
+        changeIsWinner(to: hasWin)
         if hasWin {
-            viewState = .endGame
+            changeViewState(to: .endGame)
         }
         
         let currentMove = Move(
@@ -106,10 +107,14 @@ extension ViewModel: BoardViewModelProtocol {
         
         await self.repository?.sendMove(currentMove)
         
-        selectedPiace = nil
-        avaliableMoviments = []
-        
-        isTurn = false
+        clearMove()
+    }
+    
+    private func clearMove() {
+        DispatchQueue.main.async { [weak self] in
+            self?.selectedPiace = nil
+            self?.avaliableMoviments = []
+        }
     }
     
     func hasWin() -> Bool {
@@ -120,7 +125,7 @@ extension ViewModel: BoardViewModelProtocol {
     }
     
     func receiveMove(_ move: Move) {
-        isTurn.toggle()
+        toggleIsTurn()
         
         if let deadPiece = move.removed,
             let toSpace = move.moveTo,
@@ -132,13 +137,13 @@ extension ViewModel: BoardViewModelProtocol {
         
         if let hasLose = move.endGame {
             if hasLose {
-                viewState = .endGame
+                changeViewState(to: .endGame)
             }
         }
         
         if let isRestarting = move.retartGame {
             if isRestarting {
-                viewState = .inGame
+                changeViewState(to: .inGame)
                 startGame()
             }
         }
