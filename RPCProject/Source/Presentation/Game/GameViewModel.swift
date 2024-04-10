@@ -28,13 +28,13 @@ class ViewModel: ObservableObject {
         didSet {
             switch connectionState {
             case .firstToConnect:
-                viewState = .inGame
+                changeViewState(to: .inGame)
                 isTurn = true
                 isFirst = true
             case .startGame:
-                viewState = .inGame
+                changeViewState(to: .inGame)
             case .none:
-                viewState = .notStarted
+                changeViewState(to: .notStarted)
             }
         }
     }
@@ -83,7 +83,9 @@ class ViewModel: ObservableObject {
             .store(in: &cancellables)
         
         repository?.movePublisher.sink { [weak self] move in
-            self?.receiveMove(move)
+            DispatchQueue.main.async {
+                self?.receiveMove(move)                
+            }
         }
         .store(in: &cancellables)
     }
@@ -96,5 +98,23 @@ extension ViewModel {
         case waitingPlayer
         case inGame
         case endGame
+    }
+    
+    func changeViewState(to newState: ViewState) {
+        DispatchQueue.main.async { [weak self] in
+            self?.viewState = newState
+        }
+    }
+    
+    func changeIsWinner(to newValue: Bool) {
+        DispatchQueue.main.async { [weak self] in
+            self?.isWinner = newValue
+        }
+    }
+    
+    func toggleIsTurn() {
+        DispatchQueue.main.async { [weak self] in
+            self?.isTurn.toggle()
+        }
     }
 }
