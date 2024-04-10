@@ -69,9 +69,9 @@ class NetworkRepository: NetworkRepositoryProtocol {
             let moveRequest = Game_Move.with { request in
                 request.endGame = move.endGame ?? false
                 request.restartGame = move.retartGame ?? false
-                request.moveFrom = Int32(move.moveFrom!)
-                request.moveTo = Int32(move.moveTo!)
-                request.removed = Int32(move.removed!)
+                request.moveFrom = Int32(move.moveFrom ?? 0)
+                request.moveTo = Int32(move.moveTo ?? 0)
+                request.removed = Int32(move.removed ?? 0)
             }
             await gameClient.sendMove(move: moveRequest)
         }
