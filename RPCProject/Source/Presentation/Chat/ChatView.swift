@@ -24,7 +24,7 @@ struct ChatView: View {
                 .onAppear{
                     proxy.scrollTo(bottomID)
                 }
-                .onChange(of: messages) { _ in
+                .onChange(of: messages) { (_, _) in
                     proxy.scrollTo(bottomID)
                 }
             }

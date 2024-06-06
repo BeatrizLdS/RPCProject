@@ -19,7 +19,7 @@ struct BoardView: View {
                 ForEach (0..<7) { row in
                     HStack (alignment: .center) {
                         let rate = row > 1 && row < 5 ? 7 : 3
-                        ForEach (0..<rate) { col in
+                        ForEach (0..<rate, id: \.self) { col in
                             let counter = viewModel.getCurrentSpaceInBoard(
                                 row: row,
                                 col: col,
